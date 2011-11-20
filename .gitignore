@@ -1,0 +1,4 @@
+*.pyc
+*.komodoproject
+.komodotools
+*.pyo

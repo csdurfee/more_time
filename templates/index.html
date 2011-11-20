@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block head_extra %}
+<style>
+    .time_summary_total { float: right; color: #666; }
+    #select_date_range, #button_panel { margin-left: 7px; }
+</style>
+{% endblock %}
+
+{% block page_title %}FlowTime{% endblock %}
+
+{% block header_content %}
+    <!-- controls! -->
+    <div id="button_panel" data-role="controlgroup" data-type="horizontal">
+        <button data-theme="a" data-icon="arrow-r" data-iconpos="top"
+                onclick="window.location='/record_time'">Start Timer
+        </button>
+        &nbsp;
+        <button data-theme="b" data-icon="plus" data-iconpos="top" onclick="MT.addTime();">Add Time</button>
+        &nbsp;
+        <button data-theme="a" data-icon="delete" data-iconpos="top" onclick="MT.deleteTime();">Delete Time</button>
+        &nbsp;
+        <button data-theme="a" data-icon="arrow-d" data-iconpos="top" onclick="MT.tasks();">Tasks</button>
+        &nbsp;
+        <button data-theme="a" data-icon="arrow-d" data-iconpos="top" onclick="MT.projects();">Projects</button>
+    </div>
+   
+    <!-- TODO: project selector here! -->
+{% endblock %}
+
+
+{% block main_content %}
+<div id='tasks'>
+        {% if current_project %}
+   
+            {% for taskOn in current_project.tasks %}
+                <div class='task ui-grid-a'>
+                    <div class='ui-block-a'>
+                        {{taskOn.name}}<br />
+                        <span class="time_summary">{{taskOn.start}} to {{taskOn.end}}</span>
+                    </div>
+                   
+                    <div class='ui-block-b'>
+                        <span class="time_summary_total">{{taskOn.total}}</span>
+                    </div>
+                                
+                </div>           
+            {% endfor %}
+        {% else %}
+            <em>No tasks defined</em>
+           
+        {% endif %}
+</div>
+{% endblock %}
+
+
+{% block footer_title %}
+   
+{% endblock %}
+
+
+{% block footer_content %}
+
+<div id='select_date_range' data-role="fieldcontain">
+    <select name="select-choice-1" id="select-choice-1" onchange="MT.handleDateChange();">
+        <option value="today">Today</option>
+        <option value="yesterday">Yesterday</option>
+        <option value="this_week">This Week</option>
+        <option value="all_time">All Time</option>
+    </select>
+</div>
+
+{% endblock %} 

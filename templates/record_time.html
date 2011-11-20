@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block page_title %}Recording...{% endblock %}
+
+{% block head_extra %}
+<script> 
+    MT.project_id = {{page.project_id}};
+    MT.task_id = {{page.task_id}};
+</script>
+{% endblock %}
+
+
+{% block main_content %}
+<div id="record_time">
+    <!-- display a clickable form here, so you can change the
+    category, etc. while it is recording -->
+    <div id="project_name">{{page.project_name}}</div>
+    <div id="task_name">{{page.task_name}}</div>
+    
+    <div id='clock'>0:00</div>
+    
+    <button id="start_stop" onclick="MT.start_stop();">
+        Start
+    </button>
+    
+    <button id='pause' onclick="MT.pause();">
+        Pause
+    </button>
+    
+</div>
+{% endblock %}
+
+{% block footer%}
+<!-- no-op here -->
+{% endblock %}
