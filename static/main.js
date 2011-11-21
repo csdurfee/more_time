@@ -20,27 +20,55 @@ MT.timer = {started: false};
 MT.timer.start = function() {
     MT.timer.started = true;
     MT.timer.start_time = new Date();
-    // load and run the appropriate watch.
-    var watch = MT.watch_face(MT.id);
-
-    watch.start(0);
+    // TODO: load and run the appropriate watch.
+    $("#clock").text("0:00");
     
+    MT.timer.interval = window.setInterval(MT.timer.repaint, 200);
+    
+    $("#pause").show().button("refresh");
+    $("#start_stop").text("Stop").button("refresh");
+};
+
+MT.timer.repaint = function() {
+    var elapsed = (new Date()) - MT.timer.start_time;
+    
+    // TODO: format it. doesn't seem to be basic timedelta math in js.
+    var seconds = elapsed / 1000.0;
+    
+    var hours = 0; var minutes = 0;
+    while(seconds >= 60 * 60) {
+        hours++;
+        seconds = seconds - (60 * 60);
+    }
+    while(seconds >= 60) {
+        minutes++;
+        seconds = seconds - 60;
+    }
+    
+    var formattedTime = hours + ":" + minutes.toFixed(2) + ":" + seconds.toFixed(2);
+    $("#clock").text(formattedTime);
 };
 
 MT.timer.stop = function() {
     var now = new Date();
+    window.clearInterval(MT.timer.interval);
+    
     var elapsed = now - MT.timer.start_time;
-    alert("elapsed is " + elapsed);
+    //alert("elapsed is " + elapsed);
     // do a request to the interface that will save it.
     jQuery.ajax(
       "/record_time",
         {
             'type' : "POST",
             'elapsed' : elapsed,
+            'now' : now,
             'project_id' : MT.project_id,
             'task_id' : MT.task_id
         }
     );
+    $("#pause").hide().button("refresh");
+    
+    $("#save").show().button("refresh");
 };
 
 MT.start_stop = function() {
@@ -50,33 +78,3 @@ MT.start_stop = function() {
         MT.timer.start();
     }    
 };
-
-MT.watches = {};
-
-MT.watches.generic = function(id) {
-    var watch = {id:id};
-
-    // init code here.
-
-    watch.start = function(startTime) {
-        $("#clock").text(this.renderTime(startTime));
-    };
-
-    watch.renderTime = function(rawTime) {
-        return "pants:" + rawTime;  
-    };
-
-    watch.run = function() {
-        alert('fooby');
-    };
-    
-    watch.listen = function() {
-        
-        
-    };
-    return watch;
-    
-};
-
-// TODO: load based on prefs.
-MT.watch_face = MT.watches.generic;

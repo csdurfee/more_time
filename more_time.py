@@ -11,14 +11,15 @@ app.config.from_object(__name__)
 #app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 @app.before_request
 def before_request():
-    pass
+    flask.g.app = app
 
 @app.teardown_request
 def teardown_request(exception):
     """Closes the database again at the end of the request."""
     if hasattr(flask.g, 'db'):
         flask.g.db.close()
-
+    flask.g.app = None
+    
 # ROUTES
 app.route('/<int:idx>')(views.index)
 

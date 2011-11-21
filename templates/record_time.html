@@ -22,11 +22,11 @@
     <button id="start_stop" onclick="MT.start_stop();">
         Start
     </button>
+    <div id='recordgroup' data-role="controlgroup" data-type='horizontal'>
+        <button data-role='button' id='pause' onclick="MT.pause();" value='Pause'>Pause</button>
     
-    <button id='pause' onclick="MT.pause();">
-        Pause
-    </button>
-    
+        <button data-role='button' id='save' onclick="MT.save();" value='Save'>Save</button>
+    </div>    
 </div>
 {% endblock %}
 
