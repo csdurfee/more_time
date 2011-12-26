@@ -2,11 +2,12 @@ from redisco import models
 
 
 DEFAULT_PROJECT_NAME = "Junk Drawer"
+DEFAULT_TASK_NAME = "My Task"
 
 class Validators:
     @staticmethod
     def passwordOK(field_name, field_value):
-        if not field_value or len(field_value) < 5:
+        if not field_value or len(field_value) < 4:
             return (field_name, u"Password too short!")
 
 class StaticPage(models.Model):
@@ -29,7 +30,7 @@ class UnitOfWork(models.Model):
                                          self.start_time, self.end_time)
         
 class Task(models.Model):
-    name = models.Attribute()
+    name = models.Attribute(default=DEFAULT_TASK_NAME)
     units_of_work = models.ListField(UnitOfWork)
     project = models.ReferenceField('Project')
     
@@ -57,8 +58,8 @@ class UserSpace(models.Model):
 """
 #@fixme: blort    
 class User(models.Model):
-    real_name = models.Attribute(required=True)
     user_name = models.Attribute(required=True)
+    real_name = models.Attribute()
     password  = models.Attribute(required=True, validator=Validators.passwordOK)
     active = models.BooleanField(default=True)
     
@@ -88,14 +89,15 @@ class UserManager(object):
         else:
             pass
         """
-        user_name = session['username'] or 'casey'
+        user_name = session.get('username', 'casey')
 
         user = User.objects.get_or_create(user_name = user_name)
         # TODO: get passed in project, not default to active
-        activeProject = UserManager.getOrCreateActiveProject(user)
+        active_project = UserManager.getOrCreateActiveProject(user)
         
-        activeTask = UserManager.getOrCreateActiveTask(project)
+        active_task = UserManager.getOrCreateActiveTask(activeProject)
 
+        return (user, active_project, active_task,)
 
     @staticmethod
     def getOrCreateActiveProject(user):

@@ -12,27 +12,33 @@ app.config.from_object(__name__)
 @app.before_request
 def before_request():
     flask.g.redisco_client = redisco.get_client()
-    
+    #flask.g.app = app
+    flask.g.logger = app.logger
 
 @app.teardown_request
 def teardown_request(exception):
     """Closes the database again at the end of the request."""
     flask.g.redisco_client.flushdb()
     
-    
 # ROUTES
 # TODO: replace these with blueprints.
 #
 #app.register_blueprint(base)
 
-from views import base, task, admin, account, user
-app.route('/<int:idx>')(base.index)
+from views.task import task_blueprint
+from views.base import base_blueprint
+
+app.register_blueprint(task_blueprint)
+app.register_blueprint(base_blueprint)
+
+#from views import base, task, admin, account, user
+#app.route('/<int:idx>')(base.index)
 #
-app.route('/record_time', methods=['GET', 'POST'])(task.record_time)
+#app.route('/record_time', methods=['GET', 'POST'])(task.record_time)
 
-app.route('/projects', methods=['GET', 'POST'])(user.projects)
+#app.route('/projects', methods=['GET', 'POST'])(user.projects)
 
-app.route('/account', methods=['GET', 'POST'])(account.account)
+#app.route('/account', methods=['GET', 'POST'])(account.account)
 
 #app.route('/stats')(views.stats)
 

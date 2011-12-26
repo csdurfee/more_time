@@ -6,8 +6,8 @@
 
     <script>
         MT.settings = {};
-        MT.settings.project_id = {{page.project_id}};
-        MT.settings.task_id = {{page.task_id}};
+        MT.settings.project_id = {{project.id}};
+        MT.settings.task_id = {{task.id}};
     </script>
 {% endblock %}
 
@@ -16,8 +16,8 @@
 <div id="record_time">
     <!-- display a clickable form here, so you can change the
     category, etc. while it is recording -->
-    <div id="project_name">{{page.project_name}}</div>
-    <div id="task_name">{{page.task_name}}</div>
+    <div id="project_name">{{project.name}}</div>
+    <div id="task_name">{{task.name}}</div>
     
     <div id='clock'>0:00</div>
     

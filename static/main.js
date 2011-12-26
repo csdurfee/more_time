@@ -29,6 +29,39 @@ MT.timer.start = function() {
     $("#start_stop").text("Stop").button("refresh");
 };
 
+
+
+MT.timer.stop = function() {
+    var now = new Date();
+    window.clearInterval(MT.timer.interval);
+    
+    var elapsed = now - MT.timer.start_time;
+    //alert("elapsed is " + elapsed);
+    // do a request to the interface that will save it.
+    jQuery.ajax(
+      "/record_time",
+        {
+            'type' : "POST",
+            'start_time' : MT.timer.start_time,
+            'end_time' : now,
+            'elapsed' : elapsed,
+            'project_id' : MT.settings.project_id,
+            'task_id' : MT.settings.task_id
+        }
+    );
+    $("#pause").hide().button("refresh");
+    
+    $("#save").show().button("refresh");
+};
+
+MT.start_stop = function() {
+    if(this.timer.started) {
+        MT.timer.stop();    
+    } else {
+        MT.timer.start();
+    }    
+};
+
 MT.timer.repaint = function() {
     var elapsed = (new Date()) - MT.timer.start_time;
     
@@ -47,34 +80,4 @@ MT.timer.repaint = function() {
     
     var formattedTime = hours + ":" + minutes.toFixed(2) + ":" + seconds.toFixed(2);
     $("#clock").text(formattedTime);
-};
-
-MT.timer.stop = function() {
-    var now = new Date();
-    window.clearInterval(MT.timer.interval);
-    
-    var elapsed = now - MT.timer.start_time;
-    //alert("elapsed is " + elapsed);
-    // do a request to the interface that will save it.
-    jQuery.ajax(
-      "/record_time",
-        {
-            'type' : "POST",
-            'elapsed' : elapsed,
-            'now' : now,
-            'project_id' : MT.settings.project_id,
-            'task_id' : MT.settings.task_id
-        }
-    );
-    $("#pause").hide().button("refresh");
-    
-    $("#save").show().button("refresh");
-};
-
-MT.start_stop = function() {
-    if(this.timer.started) {
-        MT.timer.stop();    
-    } else {
-        MT.timer.start();
-    }    
 };
