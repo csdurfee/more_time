@@ -62,8 +62,8 @@ MT.timer.stop = function() {
             'type' : "POST",
             'elapsed' : elapsed,
             'now' : now,
-            'project_id' : MT.project_id,
-            'task_id' : MT.task_id
+            'project_id' : MT.settings.project_id,
+            'task_id' : MT.settings.task_id
         }
     );
     $("#pause").hide().button("refresh");
