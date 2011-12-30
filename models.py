@@ -1,7 +1,8 @@
 from redisco import models
 
-from werkzeug import generate_password_hash, check_password_hash
+#from werkzeug import generate_password_hash, check_password_hash
  
+import werkzeug
 
 DEFAULT_PROJECT_NAME = "Junk Drawer"
 DEFAULT_TASK_NAME = "My Task"
@@ -71,20 +72,28 @@ class User(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     def check_password(self, password):
-        return check_password_hash(self.pwdhash, password)
+        return werkzeug.check_password_hash(self.pwdhash, password)
+
+    #def __init__(self, user_name, password, email):
+        #super(User, self).__init__(user_name=user_name, email=email)
+
+    #    self.user_name = user_name
+    #    self.pwdhash = werkzeug.generate_password_hash(password)
+
+    @staticmethod
+    def create_user(user_name, password, email):
+        """redisco doesn't allow you to override the constructor, hence
+        the rather ugly staticmethod"""
+        u = User(user_name=user_name, email=email)
+        u.pwdhash = werkzeug.generate_password_hash(password)
+        return u
+
+
 
 
 # TODO: put this in a separate managers.py file.
 class UserManager(object):
     """junk-drawer class.  ugh."""
-    @staticmethod
-    def create_user(user_name, password, email):
-        u = User(   user_name = user_name, 
-                    pwdhash = generate_password_hash(password),
-                    email = email)
-        u.save()
-        return u
-
 
     @staticmethod
     def getForTimer(session=dict()):

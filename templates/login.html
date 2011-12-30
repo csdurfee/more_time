@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+<h1>Login to more_time</h1>
+{% endblock %}
+
+{% block main_content %}
+
+
+<div data-role="fieldcontain">
+<FORM method='POST' action='/login'>
+	{{ form.csrf }}
+
+
+	{{ form.user_name.label }}
+
+	{{ form.user_name() }}
+
+	{{ form.password.label }}
+	
+	{{ form.password() }}
+
+	<input type='submit' value="Go" />
+</FORM>
+</div>
+{% endblock %}

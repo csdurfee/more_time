@@ -32,10 +32,12 @@ def teardown_request(exception):
 from views.task import task_blueprint
 from views.base import base_blueprint
 from views.admin import admin_blueprint
+from views.account import account_blueprint
         
 
 app.register_blueprint(task_blueprint)
 app.register_blueprint(base_blueprint)
+app.register_blueprint(account_blueprint)
 
 #from views import base, task, admin, account, user
 #app.route('/<int:idx>')(base.index)

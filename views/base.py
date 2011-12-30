@@ -6,5 +6,7 @@ base_blueprint = Blueprint('base', __name__)
 def home():
     ctx = {'title' : 'fixme'}
     g.logger.debug("fancypants!")
+    flash("howdy pards")
+    flash('niceta meatcha')
     resp = make_response(render_template("welcome.html", page=ctx))
     return resp
