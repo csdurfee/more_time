@@ -42,11 +42,13 @@ MT.timer.stop = function() {
       "/record_time",
         {
             'type' : "POST",
-            'start_time' : MT.timer.start_time,
-            'end_time' : now,
-            'elapsed' : elapsed,
-            'project_id' : MT.settings.project_id,
-            'task_id' : MT.settings.task_id
+            'data' : {
+                'start_time' : MT.timer.start_time.getTime(),
+                'end_time' : now.getTime(),
+                'elapsed' : elapsed,
+                'project_id' : MT.settings.project_id,
+                'task_id' : MT.settings.task_id
+            }
         }
     );
     $("#pause").hide().button("refresh");
@@ -78,6 +80,6 @@ MT.timer.repaint = function() {
         seconds = seconds - 60;
     }
     
-    var formattedTime = hours + ":" + minutes.toFixed(2) + ":" + seconds.toFixed(2);
+    var formattedTime = hours + ":" + minutes.toFixed(0) + ":" + seconds.toFixed(2);
     $("#clock").text(formattedTime);
 };

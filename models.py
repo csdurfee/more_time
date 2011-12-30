@@ -1,14 +1,11 @@
 from redisco import models
 
+from werkzeug import generate_password_hash, check_password_hash
+ 
 
 DEFAULT_PROJECT_NAME = "Junk Drawer"
 DEFAULT_TASK_NAME = "My Task"
 
-class Validators:
-    @staticmethod
-    def passwordOK(field_name, field_value):
-        if not field_value or len(field_value) < 4:
-            return (field_name, u"Password too short!")
 
 class StaticPage(models.Model):
     title = models.Attribute(required=True)
@@ -58,9 +55,10 @@ class UserSpace(models.Model):
 """
 #@fixme: blort    
 class User(models.Model):
+
     user_name = models.Attribute(required=True)
     real_name = models.Attribute()
-    password  = models.Attribute(required=True, validator=Validators.passwordOK)
+    pwdhash  = models.Attribute(required=True)
     active = models.BooleanField(default=True)
     
     email = models.Attribute()
@@ -70,10 +68,23 @@ class User(models.Model):
     #profile = models.ReferenceField('UserProfile')
     projects = models.ListField(Project)
 
+    created = models.DateTimeField(auto_now_add=True)
+
+    def check_password(self, password):
+        return check_password_hash(self.pwdhash, password)
+
 
 # TODO: put this in a separate managers.py file.
 class UserManager(object):
     """junk-drawer class.  ugh."""
+    @staticmethod
+    def create_user(user_name, password, email):
+        u = User(   user_name = user_name, 
+                    pwdhash = generate_password_hash(password),
+                    email = email)
+        u.save()
+        return u
+
 
     @staticmethod
     def getForTimer(session=dict()):
@@ -95,7 +106,7 @@ class UserManager(object):
         # TODO: get passed in project, not default to active
         active_project = UserManager.getOrCreateActiveProject(user)
         
-        active_task = UserManager.getOrCreateActiveTask(activeProject)
+        active_task = UserManager.getOrCreateActiveTask(active_project)
 
         return (user, active_project, active_task,)
 
