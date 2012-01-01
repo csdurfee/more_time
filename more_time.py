@@ -7,10 +7,8 @@ from flask import Flask, request, session, g, redirect, url_for, abort
 
 import redisco
 
-Flask.secret_key = '189829iqwoeprjqwpoer12341234124321'
-
 app = Flask(__name__)
-app.config.from_object(__name__)
+app.config.from_pyfile("config.py")
 #app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 @app.before_request
 def before_request():
@@ -23,35 +21,22 @@ def teardown_request(exception):
     """Closes the database again at the end of the request."""
     # this blows away everything in the DB!
     #flask.g.redisco_client.flushdb()
-    
-# ROUTES
-# TODO: replace these with blueprints.
-#
-#app.register_blueprint(base)
 
-from views.task import task_blueprint
+# TODO: make this less ugly
+# NB. these have to go after config.from_pyfile, etc.
+from views.project import project_blueprint
 from views.base import base_blueprint
 from views.admin import admin_blueprint
 from views.account import account_blueprint
-        
 
-app.register_blueprint(task_blueprint)
+# register sub-apps
+app.register_blueprint(project_blueprint)
 app.register_blueprint(base_blueprint)
 app.register_blueprint(account_blueprint)
 
-#from views import base, task, admin, account, user
-#app.route('/<int:idx>')(base.index)
-#
-#app.route('/record_time', methods=['GET', 'POST'])(task.record_time)
-
-#app.route('/projects', methods=['GET', 'POST'])(user.projects)
-
-#app.route('/account', methods=['GET', 'POST'])(account.account)
-
-#app.route('/stats')(views.stats)
-
-
 if __name__ == '__main__':
+    print "%r" % app.config
+
     app.debug = True
     # TODO: go off debug command-line flag
     if app.debug:

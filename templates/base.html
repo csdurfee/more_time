@@ -16,8 +16,6 @@
     </head>
     <body>
         {% block body %}
-
-
             <div data-role="page">
                 <div data-role='header'>
                     {% block page_title %}{% endblock %}
@@ -26,13 +24,11 @@
                 <div data-role='content'>
                     {% with messages = get_flashed_messages() %}
                         {% if messages %}
-                        <!-- <div class='ui-bar'> -->
                         <ul data-inset="true" data-theme='e' data-role="listview" class="flashes">
                                 {% for message in messages %}
                                   <li>{{ message }}</li>
                                 {% endfor %}
                             </ul>
-                        <!-- </div> -->
                       {% endif %}
                     {% endwith %}
                             

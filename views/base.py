@@ -6,7 +6,7 @@ base_blueprint = Blueprint('base', __name__)
 def home():
     ctx = {'title' : 'fixme'}
     g.logger.debug("fancypants!")
-    flash("howdy pards")
-    flash('niceta meatcha')
+    if session.new:
+	    flash("Welcome to more_time!")
     resp = make_response(render_template("welcome.html", page=ctx))
     return resp

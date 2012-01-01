@@ -14,8 +14,8 @@ class StaticPage(models.Model):
     
 class UnitOfWork(models.Model):
     note = models.Attribute()
-    start_time = models.DateTimeField()
-    end_time = models.DateField()
+    start_time = models.IntegerField()
+    end_time = models.IntegerField()
     task = models.ReferenceField("Task")
     
     def elapsed(self):
@@ -45,6 +45,9 @@ class Project(models.Model):
     name = models.Attribute(default=DEFAULT_PROJECT_NAME)
     tasks = models.ListField(Task)
     active = models.BooleanField(default=False)
+
+    def num_tasks(self):
+        return len(self.tasks)
     
     def __unicode__(self):
         return unicode(self.name)
@@ -53,8 +56,7 @@ class Project(models.Model):
 class UserSpace(models.Model):
     users = models.ListField(User)
     name = models.Attribute(required=True)
-"""
-#@fixme: blort    
+""" 
 class User(models.Model):
 
     user_name = models.Attribute(required=True)
@@ -74,12 +76,6 @@ class User(models.Model):
     def check_password(self, password):
         return werkzeug.check_password_hash(self.pwdhash, password)
 
-    #def __init__(self, user_name, password, email):
-        #super(User, self).__init__(user_name=user_name, email=email)
-
-    #    self.user_name = user_name
-    #    self.pwdhash = werkzeug.generate_password_hash(password)
-
     @staticmethod
     def create_user(user_name, password, email):
         """redisco doesn't allow you to override the constructor, hence
@@ -89,14 +85,13 @@ class User(models.Model):
         return u
 
 
-
-
 # TODO: put this in a separate managers.py file.
 class UserManager(object):
     """junk-drawer class.  ugh."""
 
+
     @staticmethod
-    def getForTimer(session=dict()):
+    def get_for_timer(session, request):
         """
         returns an anonymous user, new if necessary,
         
@@ -109,18 +104,18 @@ class UserManager(object):
         else:
             pass
         """
-        user_name = session.get('username', 'casey')
+        user_name = session.get('user_name', 'casey')
 
         user = User.objects.get_or_create(user_name = user_name)
         # TODO: get passed in project, not default to active
-        active_project = UserManager.getOrCreateActiveProject(user)
+        active_project = UserManager._getOrCreateActiveProject(user)
         
-        active_task = UserManager.getOrCreateActiveTask(active_project)
+        active_task = UserManager._getOrCreateActiveTask(active_project)
 
         return (user, active_project, active_task,)
 
     @staticmethod
-    def getOrCreateActiveProject(user):
+    def _getOrCreateActiveProject(user):
         """returns a default, "unclassified" project called Junk Drawer if there
         are no projects, or one isn't active.
 
@@ -149,7 +144,7 @@ class UserManager(object):
         return active_project
     
     @staticmethod
-    def getOrCreateActiveTask(project):
+    def _getOrCreateActiveTask(project):
         active_task = None
         first_task = None
         for t in project.tasks:
